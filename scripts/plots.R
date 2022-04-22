@@ -80,7 +80,7 @@ p[[3]] <- dat %>%
   geom_point(size=point_size) + 
   geom_errorbar(aes(ymin=low_ci, ymax=up_ci), width=0.3) + 
   geom_smooth(method="lm", se=F, size=line_size) +
-  labs(title="General population", x="Year", y="Seroprevalence (%)", shape="") + 
+  labs(title="General population", x="Year", y="Seroprevalence (%)", shape="Region") + 
   scale_x_continuous(limits=c(1960, 2020), breaks=seq(1960, 2020, 20), expand = c(0,0)) + 
   scale_y_continuous(limits=c(0, 75), breaks=seq(0,75,25), expand = c(0,0)) + 
   theme_light() + 
@@ -132,7 +132,11 @@ wrap_plots(p, ncol=2) &
   plot_annotation(tag_levels = list(c('(a)', '(b)', '(c)', '(d)', '(e)', '(f)')))
   
 
-## Save as PDF
+## Save
+# PDF
 ggsave(filename = "plots/pop_trends.pdf", width = 8, height = 8, 
        device = cairo_pdf, units = "in")
 
+# PNG
+ggsave(filename = "plots/pop_trends.png", width = 8, height = 8, dpi=600,
+       units = "in")
