@@ -8,6 +8,13 @@ library(patchwork)
 
 ## Set the country
 setcountry <- "United Kingdom"
+# 
+# ## Set the World Bank income status
+# income_vec <- c("High-income countries", 
+#                 "Upper-middle-income countries", 
+#                 "Middle-income countries", 
+#                 "Lower-middle-income countries", 
+#                 "Low-income countries")
 
 ## Load demographic data
 source("scripts/demography.R")
@@ -30,12 +37,10 @@ mctr <- 0.4 #mother-child transmission rate
 propfert <- approx(mid_age, prop_fert_age, xout=dat$age)$y
 propfert[is.na(propfert)] <- 0
 propfert <- propfert/sum(propfert)
-# plot(dat$age, propfert)
 
-## Create output dataset
-out <- setNames(data.frame(matrix(ncol=3, nrow=100)), 
-                c("foi", "prev", "ct"))
-
+## Create output dataset for later plotting
+out     <- setNames(data.frame(matrix(ncol=3, nrow=100)), 
+                    c("foi", "prev", "ct"))
 out$foi <- seq(0, 0.2, length.out=nrow(out))
 
 ## loop through each foi value to calculate prevalence & CT incidence
@@ -44,13 +49,11 @@ for (k in 1:nrow(out)){
   ## Generate age-seroprevalence curve
   for(i in 2:nrow(dat)) {
     
-    dat$new_infections[i] <- dat$n[i] * (1-dat$prev[i-1]) * out$foi[k]
+    dat$new_infections[i] <- dat$n[i-1] * (1-dat$prev[i-1]) * out$foi[k]
     dat$prev[i] <- sum(dat$new_infections[1:i]) / dat$n[i]
+    if(dat$prev[i] > 1) dat$prev[i] <- 1
     
   }
-  
-  # plot(dat$age, dat$prev, 'l', ylim=c(0,1), xlab="age", ylab="seroprevalence",
-  #      main=paste("FoI=", out$foi[k], sep=""))  #plot curve
   
   ## Estimate no. CT cases
   seroconv  <- dat$new_infections * propfert
@@ -74,6 +77,7 @@ p1 <- ggplot(data=out, aes(x=prev, y=ct)) +
   scale_x_continuous(limits=c(0, 100), breaks=seq(0, 100, 20), expand = expansion(mult=c(0, .005))) + #make sure x-axis visible on rhs
   scale_y_continuous(limits=c(0, 50), breaks=seq(0, 50, 10), expand = c(0,0)) +
   theme_light()
+
 
 ### Other plots
 ## Generate new variables
