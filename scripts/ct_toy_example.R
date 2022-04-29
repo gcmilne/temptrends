@@ -8,13 +8,6 @@ library(patchwork)
 
 ## Set the country
 setcountry <- "United Kingdom"
-# 
-# ## Set the World Bank income status
-# income_vec <- c("High-income countries", 
-#                 "Upper-middle-income countries", 
-#                 "Middle-income countries", 
-#                 "Lower-middle-income countries", 
-#                 "Low-income countries")
 
 ## Load demographic data
 source("scripts/demography.R")
