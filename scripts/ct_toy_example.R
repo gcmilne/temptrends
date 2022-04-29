@@ -68,11 +68,11 @@ for (k in 1:nrow(out)){
 }
 
 ## Plot relationship between seroprevalence and CT incidence
-figIa <- ggplot(data=out, aes(x=prev, y=ct)) + 
+p1 <- ggplot(data=out, aes(x=prev, y=ct)) + 
   geom_line() + 
   labs(x="Seroprevalence in childbearing-age women (%)", y="CT incidence") + 
   scale_x_continuous(limits=c(0, 100), breaks=seq(0, 100, 20), expand = expansion(mult=c(0, .005))) + #make sure x-axis visible on rhs
-  scale_y_continuous(limits=c(0, 65), breaks=seq(0, 60, 20), expand = c(0,0)) +
+  scale_y_continuous(limits=c(0, 50), breaks=seq(0, 50, 10), expand = c(0,0)) +
   theme_light()
 
 ### Other plots
@@ -93,7 +93,7 @@ afert <- dat$age[indices]
 datfert <- data.frame(afert, pfert)
 
 ## Annual risk vs. avg age of infection
-p1 <- ggplot(data=plotdat, aes(x=probinf, y=avginf)) + 
+p2 <- ggplot(data=plotdat, aes(x=probinf, y=avginf)) + 
   geom_point(size=1) + 
   # geom_smooth(formula=y~1/I(x/100), se=T, n=1000) + 
   labs(x="Annual per capita probability of infection (%)", y="Average age of first infection") + 
@@ -102,19 +102,19 @@ p1 <- ggplot(data=plotdat, aes(x=probinf, y=avginf)) +
   theme_light()
 
 ## Fertility distribution
-p2 <- ggplot(data=datfert, aes(x=afert, y=pfert)) + 
+p3 <- ggplot(data=datfert, aes(x=afert, y=pfert)) + 
   geom_area(alpha=0.5) + 
   labs(x="Age (years)", y="Proportion pregnant (%)") + 
-  scale_x_continuous(limits=c(10, 51), breaks=seq(10, 50, 10), expand = c(0,0)) +
+  scale_x_continuous(limits=c(10, 52), breaks=seq(10, 50, 10), expand = c(0,0)) +
   scale_y_continuous(expand=c(0,0)) +
   theme_light() +
   coord_flip() + 
   theme(plot.margin=grid::unit(c(0,0,0,0),"cm"))
 
-## Combine 2 plots together
-figIb <- p1 + 
+## Combine 2 plots together (p3 as insert)
+figIb <- p2 + 
   annotation_custom(
-    ggplotGrob(p2), 
+    ggplotGrob(p3), 
     xmin = 7.5, xmax = 17.5, ymin = min(datfert$afert)+2, ymax =  max(datfert$afert)
   )
 
@@ -127,7 +127,7 @@ design <- "11
            23
            23"
 
-wrap_plots(figIa, p1, p2) + plot_layout(design = design) + 
+wrap_plots(p1, p2, p3) + plot_layout(design = design) + 
   plot_annotation(tag_levels = list(c('(a)', '(b)', '(c)')))
 
 
