@@ -115,15 +115,12 @@ figIb <- p2 +
     xmin = 7.5, xmax = 17.5, ymin = min(datfert$afert)+2, ymax =  max(datfert$afert)
   )
 
-## Combine in panel
-# wrap_plots(figIa, figIb, nrow=1, heights = 20, widths=40) &  
-#   plot_annotation(tag_levels = list(c('(a)', '(b)')))
-
 # panel layout
 design <- "11
            23
            23"
 
+## make multipanel plot
 wrap_plots(p1, p2, p3) + plot_layout(design = design) + 
   plot_annotation(tag_levels = list(c('(a)', '(b)', '(c)')))
 

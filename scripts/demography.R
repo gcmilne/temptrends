@@ -61,7 +61,7 @@ pop_f <- pop_f[-length(pop_f)]
 
 # ## 3. age-specific births rates
 age_pop_cat <- tmpdf[,"age"]
-tmpdf <- subset(percentASFR, name==setincome)
+tmpdf <- subset(percentASFR, name==country)
 age_fert_cat <- tmpdf[,"age"]
 index <- !is.na(match(age_pop_cat,age_fert_cat))
 index <- index[-length(index)]
