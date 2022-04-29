@@ -13,7 +13,7 @@ setcountry <- "United Kingdom"
 source("scripts/demography.R")
 
 ## Create data
-age <- seq(0,60)  #age in years
+age <- seq(0,60, by=0.75)  #age in years (increases in 9-month intervals)
 dat <- setNames(data.frame(matrix(nrow=length(age), ncol=4)), 
                 c("age", "n", "new_infections", "prev"))
 dat$age <- age
