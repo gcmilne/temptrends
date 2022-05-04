@@ -11,7 +11,27 @@ library(scales)  #to show colour palette
 ## Read in cleaned data
 dat <- readRDS("data/cleandat.RDS")
 
-## Create colour scale
+## Check World Bank income status (as of 2021) of countries in dataset
+wb <- read.csv("data/WB21-data.csv", fileEncoding="UTF-8-BOM")
+
+# Make country names comparable between datasets
+sorted_countries           <- as.character(sort(unique(dat$country)))
+sorted_countries[c(3, 12)] <- "United Kingdom"
+sorted_countries[13]       <- "Korea, Rep."
+sorted_countries[16]       <- "United States"
+
+# Find income status for each country
+incomes             <- vector("character", length(sorted_countries))
+
+for (i in 1:length(sorted_countries)) {
+  incomes[i] <- wb$Income.group [ which(wb$Country == sorted_countries[i])]
+}
+
+# How many countries in each income bracket?
+length(incomes [which(incomes == "High income")])          #how many high income countries?
+length(incomes [which(incomes == "Upper middle income")])  #how many upper-middle income countries?
+
+## Create colour scale for plots
 dat$country <- as.factor(dat$country)
 nlevels(dat$country)  #how many countries?
 
@@ -134,9 +154,9 @@ wrap_plots(p, ncol=2) &
 
 ## Save
 # PDF
-ggsave(filename = "plots/pop_trends.pdf", width = 8, height = 8, 
+ggsave(filename = "plots/pop_trends.pdf", width = 10, height = 10, 
        device = cairo_pdf, units = "in")
 
 # PNG
-ggsave(filename = "plots/pop_trends.png", width = 8, height = 8, dpi=600,
+ggsave(filename = "plots/pop_trends.png", width = 10, height = 10, dpi=600,
        units = "in")
