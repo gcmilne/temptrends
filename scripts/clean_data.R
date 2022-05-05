@@ -7,7 +7,7 @@ library(dplyr)
 library(binom)
 
 ## Read in data
-dat <- read.csv("data/dat.csv", fileEncoding="UTF-8-BOM")#to avoid erroneous labelling of col 1
+dat <- read.csv("data/dat.csv")
 nrow(dat)
 
 ## Remove rows where both n and 95%CIs are missing
