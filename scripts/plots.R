@@ -66,7 +66,7 @@ palette <- c("#bf4a5c",
 # show_col(palette)  #visualise palette
 
 names(palette) <- levels(dat$country)  #create fixed factor colours
-my_scale <- scale_colour_manual(name = "Country", values = palette, limits=force)  #specify scale_fill_manual
+my_scale <- scale_colour_manual(name = "Country", values = palette, limits=force)  #specify scale_colour_manual
 
 
 ## SUBPOPULATION PLOTS ##
