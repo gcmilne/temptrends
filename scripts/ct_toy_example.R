@@ -14,16 +14,17 @@ source("scripts/demography.R")
 
 ## Create data
 age <- seq(0,60, by=0.75)  #age in years (increases in 9-month intervals)
-dat <- setNames(data.frame(matrix(nrow=length(age), ncol=4)), 
-                c("age", "n", "new_infections", "prev"))
+dat <- setNames(data.frame(matrix(nrow=length(age), ncol=5)), 
+                c("age", "n", "new_infections", "prev", "susceptibles"))
 dat$age <- age
 dat$prev[1] <- 0            #everyone seronegative at birth
 dat$new_infections[1] <- 0  #no new infections at age 0
+dat$susceptibles[1]   <- 0
 
 # estimate female population size in each age category
 f     <- spline(mid_age, pop_f, xout=dat$age)
 dat$n <- f$y
-mctr <- 0.4 #mother-child transmission rate
+mctr <- 0.44 #mother-child transmission rate
 # plot(dat$age, dat$n)
 
 # estimate fertility distribution
@@ -63,19 +64,21 @@ for (k in 1:nrow(out)){
   
 }
 
+
 ## Plot relationship between seroprevalence and CT incidence
 p1 <- ggplot(data=out, aes(x=prev, y=ct)) + 
-  geom_line() + 
-  labs(x="Seroprevalence in childbearing-age women (%)", y="CT incidence") + 
+  # geom_line() +
+  geom_point() + 
+  labs(x="Seroprevalence in childbearing-age women (%)", y="CT incidence per 10,000 births") + 
   scale_x_continuous(limits=c(0, 100), breaks=seq(0, 100, 20), expand = expansion(mult=c(0, .005))) + #make sure x-axis visible on rhs
-  scale_y_continuous(limits=c(0, 50), breaks=seq(0, 50, 10), expand = c(0,0)) +
+  scale_y_continuous(limits=c(0, 60), breaks=seq(0, 60, 10), expand = c(0,0)) +
   theme_light()
 
 
 ### Other plots
 ## Generate new variables
 out$avginf  <- round(1/out$foi, 1)    #avg age of 1st infection
-out$probinf <- round(out$foi*100, 2)  #annual prob (%) of infection
+out$probinf <- round(out$foi*10000, 2)  #annual prob of infection per 10,000 people
 
 # Trim data for plotting
 plotdat       <- out
@@ -85,27 +88,28 @@ plotdat       <- plotdat[row_index, ]
 # Add % pregnant & age
 indices <- which(propfert != 0)
 
-pfert <- propfert[indices]*100
+pfert <- propfert[indices]
 afert <- dat$age[indices]
 datfert <- data.frame(afert, pfert)
 
 ## Annual risk vs. avg age of infection
+
+## express as per 10,000 live births
 p2 <- ggplot(data=plotdat, aes(x=probinf, y=avginf)) + 
   geom_point(size=1) + 
   # geom_smooth(formula=y~1/I(x/100), se=T, n=1000) + 
-  labs(x="Annual per capita probability of infection (%)", y="Average age of first infection") + 
-  scale_x_continuous(limits=c(1, 20), breaks=c(seq(1, 4, 1), seq(5, 20, 5)), expand = c(0,0)) + 
+  labs(x="Incidence of infection per 10,000", y="Average age of first infection") + 
+  # scale_x_continuous(limits=c(1, 20), breaks=c(seq(1, 4, 1), seq(5, 20, 5)), expand = c(0,0)) + 
   scale_y_continuous(limits=c(0, 100), breaks=c(0, seq(20, 40, 10), seq(60, 100, 20)), expand = c(0,0)) + 
   theme_light()
 
 ## Fertility distribution
 p3 <- ggplot(data=datfert, aes(x=afert, y=pfert)) + 
   geom_area(alpha=0.5) + 
-  labs(x="Age (years)", y="Proportion pregnant (%)") + 
+  labs(x="Age (years)", y="Probability density") + 
   scale_x_continuous(limits=c(10, 52), breaks=seq(10, 50, 10), expand = c(0,0)) +
   scale_y_continuous(expand=c(0,0)) +
   theme_light() +
-  coord_flip() + 
   theme(plot.margin=grid::unit(c(0,0,0,0),"cm"))
 
 ## Combine 2 plots together (p3 as insert)
