@@ -14,12 +14,11 @@ source("scripts/demography.R")
 
 ## Create data
 age <- seq(0,60, by=0.75)  #age in years (increases in 9-month intervals)
-dat <- setNames(data.frame(matrix(nrow=length(age), ncol=5)), 
-                c("age", "n", "new_infections", "prev", "susceptibles"))
+dat <- setNames(data.frame(matrix(nrow=length(age), ncol=4)), 
+                c("age", "n", "new_infections", "prev"))
 dat$age <- age
 dat$prev[1] <- 0            #everyone seronegative at birth
 dat$new_infections[1] <- 0  #no new infections at age 0
-dat$susceptibles[1]   <- 0
 
 # estimate female population size in each age category
 f     <- spline(mid_age, pop_f, xout=dat$age)
@@ -45,7 +44,8 @@ for (k in 1:nrow(out)){
     
     dat$new_infections[i] <- dat$n[i-1] * (1-dat$prev[i-1]) * out$foi[k]
     dat$prev[i] <- sum(dat$new_infections[1:i]) / dat$n[i]
-    if(dat$prev[i] > 1) dat$prev[i] <- 1
+    if(dat$prev[i] > 1) dat$prev[i] <- 1   #not possible to get prevalence >100%
+    if(dat$prev[i-1] >=1) dat$prev[i] <- 1 #indicates no seroreversion (once 100%, stays so)
     
   }
   
@@ -57,11 +57,9 @@ for (k in 1:nrow(out)){
   # Incidence of CT per 10,000 live births
   out$ct[k] <- (sum(ct_cases)/no_births)*10000
   
-  indices     <- which(propfert !=0)
-  
   # Demographically weighted seroprevalence in childbearing ages
-  out$prev[k] <- round(weighted.mean(x = dat$prev[indices], w = propfert[indices] * dat$n[indices])*100, 2)
-  
+  out$prev[k] <- round(weighted.mean(x = dat$prev, w = propfert * dat$n)*100, 2)
+
 }
 
 
@@ -111,13 +109,6 @@ p3 <- ggplot(data=datfert, aes(x=afert, y=pfert)) +
   scale_y_continuous(expand=c(0,0)) +
   theme_light() +
   theme(plot.margin=grid::unit(c(0,0,0,0),"cm"))
-
-## Combine 2 plots together (p3 as insert)
-figIb <- p2 + 
-  annotation_custom(
-    ggplotGrob(p3), 
-    xmin = 7.5, xmax = 17.5, ymin = min(datfert$afert)+2, ymax =  max(datfert$afert)
-  )
 
 # panel layout
 design <- "11
