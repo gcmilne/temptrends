@@ -36,31 +36,37 @@ out     <- setNames(data.frame(matrix(ncol=3, nrow=100)),
                     c("foi", "prev", "ct"))
 out$foi <- seq(0, 0.2, length.out=nrow(out))
 
+## make data as list to store age-seroprevalence curves
+dat <- rep(list(dat), nrow(out))
+
 ## loop through each foi value to calculate prevalence & CT incidence
 for (k in 1:nrow(out)){
   
   ## Generate age-seroprevalence curve
-  for(i in 2:nrow(dat)) {
+  for(i in 2:nrow(dat[[k]])) {
     
-    dat$new_infections[i] <- dat$n[i-1] * (1-dat$prev[i-1]) * out$foi[k]
-    dat$prev[i] <- sum(dat$new_infections[1:i]) / dat$n[i]
-    if(dat$prev[i] > 1) dat$prev[i] <- 1   #not possible to get prevalence >100%
-    if(dat$prev[i-1] >=1) dat$prev[i] <- 1 #indicates no seroreversion (once 100%, stays so)
+    dat[[k]]$new_infections[i] <- dat[[k]]$n[i-1] * (1-dat[[k]]$prev[i-1]) * out$foi[k]
+    dat[[k]]$prev[i] <- sum(dat[[k]]$new_infections[1:i]) / dat[[k]]$n[i]
+    if(dat[[k]]$prev[i]   > 1) dat[[k]]$prev[i] <- 1  #not possible to get prevalence >100%
+    if(dat[[k]]$prev[i-1] >=1) dat[[k]]$prev[i] <- 1  #indicates no seroreversion (once 100%, stays so)
     
   }
   
   ## Estimate no. CT cases
-  seroconv  <- dat$new_infections * propfert
+  seroconv  <- dat[[k]]$new_infections * propfert
   ct_cases  <- seroconv*mctr
-  no_births <- sum(dat$n * propfert)
+  no_births <- sum(dat[[k]]$n * propfert)
   
   # Incidence of CT per 10,000 live births
   out$ct[k] <- (sum(ct_cases)/no_births)*10000
   
   # Demographically weighted seroprevalence in childbearing ages
-  out$prev[k] <- round(weighted.mean(x = dat$prev, w = propfert * dat$n)*100, 2)
+  out$prev[k] <- round(weighted.mean(x = dat[[k]]$prev, w = propfert * dat[[k]]$n)*100, 2)
 
 }
+
+# plot(dat[[1]]$age, dat[[1]]$prev, 'l', ylim=c(-0.1, 1.1),  xlab="Age (years)", ylab="Seroprevalence")
+# for (k in 2:nrow(out)) lines(dat[[k]]$age, dat[[k]]$prev)
 
 
 ## Plot relationship between seroprevalence and CT incidence
