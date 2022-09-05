@@ -58,14 +58,13 @@ for (k in 1:nrow(out)){
   out$ct[k] <- (sum(ct_cases)/no_births)*10000
   
   # Demographically weighted seroprevalence in childbearing ages
-  out$prev[k] <- round(weighted.mean(x = dat[[k]]$prev, w = propfert * dat[[k]]$n)*100, 2)
+  out$prev[k] <- round(weighted.mean(x = dat[[k]]$prev, w = propfert)*100, 2)
 
 }
 
 
 ## Plot relationship between seroprevalence and CT incidence
 p1 <- ggplot(data=out, aes(x=prev, y=ct)) + 
-  # geom_line() +
   geom_point() + 
   labs(x="Seroprevalence in childbearing-age women (%)", y="CT incidence per 10,000 births") + 
   scale_x_continuous(limits=c(0, 100), breaks=seq(0, 100, 20), expand = expansion(mult=c(0, .005))) + #make sure x-axis visible on rhs
