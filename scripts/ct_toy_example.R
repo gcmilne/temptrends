@@ -46,8 +46,7 @@ for (k in 1:nrow(out)){
     dat[[k]]$new_infections[i] <- dat[[k]]$n[i-1] * (1-dat[[k]]$prev[i-1]) * out$foi[k]
     dat[[k]]$prev[i] <- sum(dat[[k]]$new_infections[1:i]) / dat[[k]]$n[i]
     if(dat[[k]]$prev[i]   > 1) dat[[k]]$prev[i] <- 1  #not possible to get prevalence >100%
-    if(dat[[k]]$prev[i-1] >=1) dat[[k]]$prev[i] <- 1  #indicates no seroreversion (once 100%, stays so)
-    
+
   }
   
   ## Estimate no. CT cases
@@ -88,7 +87,7 @@ plotdat       <- plotdat[row_index, ]
 indices <- which(propfert != 0)
 
 pfert <- propfert[indices]
-afert <- dat$age[indices]
+afert <- dat[[1]]$age[indices]
 datfert <- data.frame(afert, pfert)
 
 ## Annual risk vs. avg age of infection
