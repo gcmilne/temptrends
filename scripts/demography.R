@@ -1,4 +1,4 @@
-######################################
+#######################################
 ## Country-specific demographic data ##
 #######################################
 
@@ -17,7 +17,7 @@ library(wpp2019)
 data(percentASFR) # age distribution of fertility rates (percentage)
 data(popF) # population distribution females
 
-### 2. total population size
+### generate age categories
 tmpdf <- subset(popF, name==country)
 
 ## Extract min & max age from character strings
@@ -54,12 +54,7 @@ mid_age <- min_age + (max_age - min_age)/2
 # remove old objects
 rm(min_age, max_age)
 
-## Calculate age-specific population size
-pop_f <- tmpdf[,year1]*1000 # total population by age (females)
-pop_f <- pop_f[-length(pop_f)]
-
-
-# ## 3. age-specific births rates
+### age-specific births rates
 age_pop_cat <- tmpdf[,"age"]
 tmpdf <- subset(percentASFR, name==country)
 age_fert_cat <- tmpdf[,"age"]

@@ -19,19 +19,17 @@ dat <- setNames(data.frame(matrix(nrow=length(age), ncol=4)),
 dat$age <- age
 dat$prev[1] <- 0            #everyone seronegative at birth
 dat$new_infections[1] <- 0  #no new infections at age 0
-
-# estimate female population size in each age category
-f     <- spline(mid_age, pop_f, xout=dat$age)
-dat$n <- f$y
-mctr <- 0.44 #mother-child transmission rate
+dat$n <- rep(100, length(dat$new_infections)) #100 women in each age cat
 # plot(dat$age, dat$n)
+
+mctr <- 0.44 #mother-child transmission rate
 
 # estimate fertility distribution
 propfert <- approx(mid_age, prop_fert_age, xout=dat$age)$y
 propfert[is.na(propfert)] <- 0
 propfert <- propfert/sum(propfert)
 
-## Create output dataset for later plotting
+# create df to store output from simulations
 out     <- setNames(data.frame(matrix(ncol=3, nrow=100)), 
                     c("foi", "prev", "ct"))
 out$foi <- seq(0, 0.2, length.out=nrow(out))
@@ -64,9 +62,6 @@ for (k in 1:nrow(out)){
   out$prev[k] <- round(weighted.mean(x = dat[[k]]$prev, w = propfert * dat[[k]]$n)*100, 2)
 
 }
-
-# plot(dat[[1]]$age, dat[[1]]$prev, 'l', ylim=c(-0.1, 1.1),  xlab="Age (years)", ylab="Seroprevalence")
-# for (k in 2:nrow(out)) lines(dat[[k]]$age, dat[[k]]$prev)
 
 
 ## Plot relationship between seroprevalence and CT incidence
@@ -135,3 +130,5 @@ ggsave(filename = "plots/box1_multipanel.pdf",
 ggsave(filename = "plots/box1_multipanel.png",
        height = 8, width = 8, units = "in", dpi=600)
 
+## Save age-seroprevalence curves
+saveRDS(dat, file="data/CTout.RDS")
