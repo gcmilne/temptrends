@@ -116,8 +116,8 @@ design <- "11
 
 ## make multipanel plot
 wrap_plots(p1, p2, p3) + plot_layout(design = design) + 
-  plot_annotation(tag_levels = list(c('(a)', '(b)', '(c)')))
-
+  plot_annotation(tag_levels = 'A') & 
+  theme(plot.tag = element_text(face = "bold"))
 
 ## Save plot
 #PDF

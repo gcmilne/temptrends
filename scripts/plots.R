@@ -159,7 +159,8 @@ p[[6]] <- dat %>%
 
 # population multipanel plot
 wrap_plots(p, ncol=2) &  
-  plot_annotation(tag_levels = list(c('(a)', '(b)', '(c)', '(d)', '(e)', '(f)'))) & 
+  plot_annotation(tag_levels = 'A') & 
+  theme(plot.tag = element_text(face = "bold")) & 
   theme(legend.spacing.y = unit(0.05, "cm"))  #reduce space between fig legends
 
 ## Save
