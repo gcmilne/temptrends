@@ -4,6 +4,9 @@ TempTrends
 
 Gregory C. Milne, Joanne P. Webster, Martin Walker
 
+### Pubication
+Milne, G.C., Webster, J.P., Walker, M., 2022. Is the incidence of congenital toxoplasmosis declining? Trends in Parasitology, https://www.cell.com/trends/parasitology/fulltext/S1471-4922(22)00256-2.
+
 ### Project description
 Investigating temporal trends in anti-Toxoplasma gondii IgG seroprevalence in human populations in different countries, regions, populations, and subpopulations. 
 
